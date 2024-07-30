@@ -21,8 +21,9 @@ const Login = () => {
 
             localStorage.setItem('userId', res.data._id);
             localStorage.setItem('isAdmin', res.data.isAdmin);
+            console.log('Stored isAdmin', res.data.isAdmin)
 
-            if (res.data.isAdmin) {
+            if ( res.data.isAdmin === true) {
                 navigate('/vendorhome');
             } else {
                 navigate('/home');

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Table, Form, Spinner, Alert } from 'react-bootstrap';
-import VendorLayout from '../../Layout/VendorLayout';
+import VendorLayout from '../../Layout/VendorLayout'
 import axios from 'axios';
 
 const Vendor = () => {
@@ -18,7 +18,7 @@ const Vendor = () => {
             }
 
             try {
-                const res = await axios.get(`http://localhost:8000/api/deliveries/bookings`);
+                const res = await axios.get('http://localhost:8000/api/bookings');
                 setDeliveries(res.data);
             } catch (err) {
                 setError(err.response?.data?.message || 'Failed to fetch deliveries');
@@ -29,6 +29,17 @@ const Vendor = () => {
 
         fetchDeliveries();
     }, []);
+
+    const handleStatusChange = async (id, status) => {
+        try {
+            await axios.put('http://localhost:8000/api/bookings/', { status });
+            setDeliveries(deliveries.map(updateBooking => 
+                updateBooking._id === id ? { ...updateBooking, status } : updateBooking
+            ));
+        } catch (err) {
+            console.error('Failed to update delivery status', err);
+        }
+    };
 
     return (
         <VendorLayout>
@@ -62,7 +73,11 @@ const Vendor = () => {
                                         <td>{delivery.plot}</td>
                                         <td>{delivery.amount}</td>
                                         <td>
-                                            <Form.Check aria-label="option 1" checked={delivery.status === 'pending'} readOnly />
+                                            <Form.Check
+                                                aria-label="option 1"
+                                                checked={delivery.status === 'delivered'}
+                                                onChange={() => handleStatusChange(delivery._id, delivery.status === 'pending' ? 'delivered' : 'pending')}
+                                            />
                                         </td>
                                     </tr>
                                 ))

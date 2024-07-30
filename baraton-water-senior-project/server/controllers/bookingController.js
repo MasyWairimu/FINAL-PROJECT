@@ -25,9 +25,11 @@ export const updateBooking = async (req, res, next) => {
     try {
         const updateBooking = await Booking.findByIdAndUpdate(
             req.params.id,
-            { $set: req.body },
+            { $set: req.body},
+            { status: req.body.status},
             { new: true }
         );
+        if (!updateBooking) return res.status(404).json({ message: 'Booking not found' });
         res.status(200).json(updateBooking)
 
     } catch (err) {
