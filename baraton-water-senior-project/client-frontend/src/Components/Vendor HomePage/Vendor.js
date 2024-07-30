@@ -44,7 +44,7 @@ const Vendor = () => {
     return (
         <VendorLayout>
             <div>
-                <h1>PENDING DELIVERIES</h1>
+                <h1 style={{color: 'white', textAlign: 'center'}} > <strong>PENDING DELIVERIES</strong></h1>
                 {loading ? (
                     <Spinner animation="border" variant="light" />
                 ) : error ? (
