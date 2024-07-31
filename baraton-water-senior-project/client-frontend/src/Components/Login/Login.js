@@ -17,6 +17,7 @@ const Login = () => {
                  {email, password},
                  {withCredentials: true}
                 );
+                
             console.log(res.data);
 
             localStorage.setItem('userId', res.data._id);

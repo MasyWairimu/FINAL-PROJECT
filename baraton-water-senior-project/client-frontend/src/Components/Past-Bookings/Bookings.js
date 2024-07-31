@@ -57,7 +57,7 @@ const PastBookings = () => {
                         </ListGroup>
                     )}
                     <div className='d-grid d-md-flex justify-content-md-end m-2'>
-                        <Button className='btn' onClick={() => navigate('/booking')} style={{ color: 'whitesmoke', textDecoration: 'none' }}>Back to Booking</Button>
+                        <Button className='btn' onClick={() => navigate('/home')} style={{ color: 'whitesmoke', textDecoration: 'none' }}>Back to Booking</Button>
                     </div>
                 </Card.Body>
             </Card>
