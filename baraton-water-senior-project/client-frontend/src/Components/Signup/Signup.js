@@ -27,14 +27,17 @@ const Signup = () => {
         if(password !== confirmPassword) {
             alert("Passwords do not match!");
             return;
+            <Alert>Passwords do not match</Alert>
         }
 
         try {
-            const res = await axios.post('http://localhost:8000/api/authentication/register')
+            const res = await axios.post('http://localhost:8000/api/authentication/register',
+                userData,
+                {withCredentials: true}
+            )
             console.log(res.data);
-            <Alert>User has been created</Alert>
 
-            navigate('/home')
+            navigate('/')
         }catch (err){
             setError(err.response?.data?.message || 'something went wrong!' )
         }
@@ -85,8 +88,8 @@ const Signup = () => {
                     {error && <p style={{color:'red'}} >{error}</p>}
 
                     <div className='d-grid d-md-flex justify-content-md-end'>
-                        <Button className='btn' type="submit">
-                            <Link to="/" className='linkelement' style={{ color: 'whitesmoke', textDecoration: 'none' }}>SUBMIT</Link>
+                        <Button className='btn w-25' type="submit">
+                            SUBMIT
                         </Button>
                     </div>
                 </Form>
