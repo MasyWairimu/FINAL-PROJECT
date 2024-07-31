@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { Button, Col, Form, Card, Row, Alert } from 'react-bootstrap'
-import { Link, useNavigate } from 'react-router-dom'
+import {  useNavigate } from 'react-router-dom'
 import axios from 'axios'
 
 const Signup = () => {
