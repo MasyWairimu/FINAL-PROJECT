@@ -26,8 +26,8 @@ const Signup = () => {
 
         if(password !== confirmPassword) {
             alert("Passwords do not match!");
-            return;
             <Alert>Passwords do not match</Alert>
+            return;
         }
 
         try {
