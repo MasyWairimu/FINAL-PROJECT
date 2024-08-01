@@ -15,7 +15,7 @@ const NavbarComponent = () => {
                     </Navbar.Brand>
                     <Nav>
                         <Nav.Link style={{color:"white"}} href="/vendorhome">Home</Nav.Link>
-                        <Nav.Link style={{color:"white"}} href="#orders">Orders</Nav.Link>
+                        <Nav.Link style={{color:"white"}} href="/orders">My Orders</Nav.Link>
                         <Nav.Link style={{color:"white"}} href="#past-bookings">Past Bookings</Nav.Link>
                     </Nav>
                 </Container>

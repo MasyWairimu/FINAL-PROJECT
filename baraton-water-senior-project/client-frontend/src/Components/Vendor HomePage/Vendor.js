@@ -18,7 +18,7 @@ const Vendor = () => {
             }
 
             try {
-                const res = await axios.get('http://localhost:8000/api/bookings');
+                const res = await axios.get('http://localhost:8000/api/bookings/');
                 setDeliveries(res.data);
             } catch (err) {
                 setError(err.response?.data?.message || 'Failed to fetch deliveries');
@@ -33,8 +33,8 @@ const Vendor = () => {
     const handleStatusChange = async (id, status) => {
         try {
             await axios.put('http://localhost:8000/api/bookings/', { status });
-            setDeliveries(deliveries.map(updateBooking => 
-                updateBooking._id === id ? { ...updateBooking, status } : updateBooking
+            setDeliveries(deliveries.map(delivery => 
+                delivery._id === id ? { ...delivery, status } : delivery
             ));
         } catch (err) {
             console.error('Failed to update delivery status', err);
@@ -44,7 +44,7 @@ const Vendor = () => {
     return (
         <VendorLayout>
             <div>
-                <h1 style={{color: 'white', textAlign: 'center'}} > <strong>PENDING DELIVERIES</strong></h1>
+                <h1 style={{color: 'white', textAlign: 'center'}} className='mt-2' > <strong>AVAILABLE DELIVERIES</strong></h1>
                 {loading ? (
                     <Spinner animation="border" variant="light" />
                 ) : error ? (
@@ -67,8 +67,8 @@ const Vendor = () => {
                                 deliveries.map((delivery, index) => (
                                     <tr key={delivery._id}>
                                         <td>{index + 1}</td>
-                                        <td>{delivery.username}</td>
-                                        <td>{delivery.phoneNumber}</td>
+                                        <td>{delivery.userId?.username || 'N/A'}</td>
+                                        <td>{delivery.userId?.phoneNumber || 'N/A'}</td>
                                         <td>{delivery.area}</td>
                                         <td>{delivery.plot}</td>
                                         <td>{delivery.amount}</td>

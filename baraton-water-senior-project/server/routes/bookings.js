@@ -12,7 +12,7 @@ router.put("/:id", updateBooking);
 // GET
 router.get("/:userId", getBooking);
 
-// GET ALL
+// GET ALL FOR USER
 router.get("/:userId", getAllBookings);
 
 // GET ALL

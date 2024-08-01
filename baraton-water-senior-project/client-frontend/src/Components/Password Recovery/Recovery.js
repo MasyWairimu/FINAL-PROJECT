@@ -7,7 +7,7 @@ const Recovery = () => {
     <div >
             <Card className='mx-auto mt-5' style={{ width: '45vw', backgroundColor: '#383232', color: 'white' }}>
                 <Card.Body>
-                    <Card.Title className='text-center p-2'>RECOVER YOUR EMAIL</Card.Title>
+                    <Card.Title className='text-center p-2'>RECOVER YOUR PASSWORD</Card.Title>
                     <Form>
                         <Form.Group className="mb-3 p-1" controlId="formBasicEmail">
                             <Row>

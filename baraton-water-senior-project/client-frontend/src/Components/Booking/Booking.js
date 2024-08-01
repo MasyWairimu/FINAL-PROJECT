@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { Card, Form, Row, Col, Button } from 'react-bootstrap'
+import { Card, Form, Row, Col, Button, Alert } from 'react-bootstrap'
 import Layout from '../../Layout/Layout'
 import { useNavigate } from 'react-router-dom'
 import axios from 'axios'
@@ -28,7 +28,7 @@ const Booking = () => {
             navigate('/checkout');
 
         } catch (err) {
-            setError(err.response?.data?.message || 'Something went wrong')
+            setError(err.response?.data?.message || <Alert>'Something went wrong. Try connecting to a stable network'</Alert>)
         }
     }
 
@@ -52,15 +52,8 @@ const Booking = () => {
 
                         <Row className="mb-3">
                             <Form.Group as={Col}>
-                                <Form.Label> No. of Jericans</Form.Label>
-                                <Row>
-                                    <Form.Select aria-label="Quantity" className='m-1 w-75'>
-                                        <option>Choose...</option>
-                                        <option value="2">Jericans</option>
-                                    </Form.Select>
-                                    <Form.Control className='m-1 w-75' type="text" placeholder="No. of Jericans" value={amount} onChange={(e) => setAmount(e.target.value)} required />
-                                </Row>
-
+                                <Form.Label> Quantity (Number of Jerrycans)</Form.Label>
+                                <Form.Control className='m-1 w-75' type="text" placeholder="No. of Jerrycans" value={amount} onChange={(e) => setAmount(e.target.value)} required />
                             </Form.Group>
                         </Row>
                         {error && <p style={{ color: 'red' }}>{error}</p>}

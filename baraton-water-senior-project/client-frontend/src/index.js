@@ -15,6 +15,7 @@ import {
   RouterProvider,
 } from "react-router-dom";
 import Bookings from './Components/Past-Bookings/Bookings';
+import Orders from './Components/Orders/Orders';
 
 const router = createBrowserRouter([
   {
@@ -55,6 +56,10 @@ const router = createBrowserRouter([
   {
     path: "/past-bookings",
     element: <Bookings/>,
+  },
+  {
+    path: "/my-orders",
+    element: <Orders/>,
   },
 ]);
 

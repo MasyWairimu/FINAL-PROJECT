@@ -25,7 +25,7 @@ export const updateBooking = async (req, res, next) => {
     try {
         const updateBooking = await Booking.findByIdAndUpdate(
             req.params.id,
-            { $set: req.body},
+            { $set: {status: req.body}},
             { status: req.body.status},
             { new: true }
         );
@@ -37,22 +37,25 @@ export const updateBooking = async (req, res, next) => {
     }
 }
 
-// GET BOOKING
+// GET BOOKING FOR A USER
 export const getBooking = async (req, res, next) => {
     try {
         // Convert the userId to an ObjectId using mongoose.Types.ObjectId
-        const userId = mongoose.Types.ObjectId(req.params.userId);
-        const getBooking = await Booking.find({ userId });
+        const userId = new  mongoose.Types.ObjectId(req.params.userId);
+        const getBooking = await Booking.find({userId}).populate('userId', 'username phoneNumber');
+        if(!getBooking){
+            return res.status(404).json({message: 'Booking not found'})
+        }
         res.status(200).json(getBooking);
     } catch (err) {
         next(err);
     }
 }
 
-// GET ALL BOOKINGS
+// GET ALL BOOKINGS FOR USERS
 export const getAllBookings = async (req, res, next) => {
     try {
-        const userId = mongoose.Types.ObjectId(req.params.userId);
+        const userId = new mongoose.Types.ObjectId(req.params.userId);
         const allBookings = await Booking.find({userId});
         res.status(200).json(allBookings)
 
@@ -64,7 +67,7 @@ export const getAllBookings = async (req, res, next) => {
 // GET ALL BOOKINGS FOR VENDOR
 export const getAllBookingsAdmin = async (req, res, next) => {
     try {
-        const allBookingsAdmin = await Booking.find();
+        const allBookingsAdmin = await Booking.find().populate('userId', 'username phoneNumber');
         res.status(200).json(allBookingsAdmin)
 
     } catch (err) {
