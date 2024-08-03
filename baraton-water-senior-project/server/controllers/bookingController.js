@@ -41,26 +41,14 @@ export const updateBooking = async (req, res, next) => {
 export const getBooking = async (req, res, next) => {
     try {
         // Convert the userId to an ObjectId using mongoose.Types.ObjectId
-        const userId = new  mongoose.Types.ObjectId(req.params.userId);
-        const getBooking = await Booking.find({userId}).populate('userId', 'username phoneNumber');
+        const userId = new mongoose.Types.ObjectId(req.params.userId);
+        const getBooking = await Booking.find({userId});
         if(!getBooking){
             return res.status(404).json({message: 'Booking not found'})
         }
         res.status(200).json(getBooking);
     } catch (err) {
         next(err);
-    }
-}
-
-// GET ALL BOOKINGS FOR USERS
-export const getAllBookings = async (req, res, next) => {
-    try {
-        const userId = new mongoose.Types.ObjectId(req.params.userId);
-        const allBookings = await Booking.find({userId});
-        res.status(200).json(allBookings)
-
-    } catch (err) {
-        next(err)
     }
 }
 
