@@ -13,11 +13,6 @@ const NavbarComponent = () => {
                         BARATON MAJI BOOKING
                         <FaFaucetDrip />
                     </Navbar.Brand>
-                    <Nav>
-                        <Nav.Link style={{color:"white"}} href="/vendorhome">Home</Nav.Link>
-                        <Nav.Link style={{color:"white"}} href="/orders">My Orders</Nav.Link>
-                        <Nav.Link style={{color:"white"}} href="#past-bookings">Past Deliveries</Nav.Link>
-                    </Nav>
                 </Container>
             </Navbar>
         </div>

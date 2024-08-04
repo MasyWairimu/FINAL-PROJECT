@@ -66,7 +66,7 @@ export const getAllBookingsAdmin = async (req, res, next) => {
 // GET ALL BOOKINGS FOR VENDOR
 export const getBookingsVendor = async(req, res, next) => {
     try{
-        const deliveries = await Booking.find({vendor: req.params.userId});
+        const deliveries = await Booking.find({vendor: req.params.userId}).populate('userId', 'username phoneNumber');
         res.status(200).json(deliveries);
     }catch (err) {
         next(err);
