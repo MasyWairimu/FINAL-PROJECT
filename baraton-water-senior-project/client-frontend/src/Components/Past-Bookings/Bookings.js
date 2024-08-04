@@ -19,13 +19,15 @@ const PastBookings = () => {
                 return;
             }
 
-            console.log('Fetching bookings for userId: ?userId')
+            console.log('Fetching bookings for userId:' +userId)
 
             try {
-                const res = await axios.get('http://localhost:8000/api/bookings/user?userId');
+                const res = await axios.get('http://localhost:8000/api/bookings/user/' + userId);
+                console.log('Response:', res.data);
                 setBookings(res.data);
             } catch (err) {
                 setError(err.response?.data?.message || 'Failed to fetch bookings');
+                console.log(err);
             } finally {
                 setLoading(false);
             }

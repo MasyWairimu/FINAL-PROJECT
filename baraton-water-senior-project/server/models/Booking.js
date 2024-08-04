@@ -21,9 +21,13 @@ const BookingSchema =  new mongoose.Schema({
     },
     status:{
         type:String,
-        // enum: ['pending', 'delivered'],
-        default: 'pending'
+        default: 'pending',
     },
+    vendor:{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User',
+        default:null,
+    }
 }
 );
 

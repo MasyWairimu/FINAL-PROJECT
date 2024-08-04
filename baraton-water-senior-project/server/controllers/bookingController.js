@@ -20,13 +20,13 @@ export const newBooking = async (req, res, next) => {
     }
 }
 
-// UPDATE BOOKING
+// UPDATE BOOKING STATUS AND ASSIGN TO VENDOR
 export const updateBooking = async (req, res, next) => {
+    const {userId} = req.body;
     try {
         const updateBooking = await Booking.findByIdAndUpdate(
             req.params.id,
-            { $set: {status: req.body}},
-            { status: req.body.status},
+            { status: 'grabbed', vendor: userId},
             { new: true }
         );
         if (!updateBooking) return res.status(404).json({ message: 'Booking not found' });
@@ -52,16 +52,27 @@ export const getBooking = async (req, res, next) => {
     }
 }
 
-// GET ALL BOOKINGS FOR VENDOR
+// GET ALL AVAILABLE BOOKINGS
 export const getAllBookingsAdmin = async (req, res, next) => {
     try {
-        const allBookingsAdmin = await Booking.find().populate('userId', 'username phoneNumber');
+        const allBookingsAdmin = await Booking.find({status: 'pending', vendor: null}).populate('userId', 'username phoneNumber');
         res.status(200).json(allBookingsAdmin)
 
     } catch (err) {
         next(err)
     }
 }
+
+// GET ALL BOOKINGS FOR VENDOR
+export const getBookingsVendor = async(req, res, next) => {
+    try{
+        const deliveries = await Booking.find({vendor: req.params.userId});
+        res.status(200).json(deliveries);
+    }catch (err) {
+        next(err);
+    }
+}
+
 // DELETE BOOKING
 export const deleteBooking = async (req, res, next) => {
 
