@@ -6,7 +6,8 @@ import userRoute from "./routes/users.js";
 import bookingsRoute from "./routes/bookings.js";
 import cookieParser from "cookie-parser"
 import cors from 'cors'
-// import auth from './middleware/auth.js'
+import lipanampesa from './routes/lipanampesa.js'
+import 'dotenv/config'
 
 const app = express()
 dotenv.config()
@@ -47,6 +48,7 @@ app.use(express.json());
 app.use("/api/authentication", authRoute);
 app.use("/api/users", userRoute);
 app.use("/api/bookings", bookingsRoute);
+app.use("/api", lipanampesa);
 
 app.use((err, req, res, next) => {
     const errorStatus = err.status || 500;
@@ -59,7 +61,9 @@ app.use((err, req, res, next) => {
     })
 });
 
-app.listen(8000, () => {
+const port = process.env.PORT
+
+app.listen(port, () => {
     connect()
-    console.log("connected to backend!")
+    console.log("connected to backend!, App listening on port " +port)
 })
