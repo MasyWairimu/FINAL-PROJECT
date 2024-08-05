@@ -1,5 +1,5 @@
 import React from 'react'
-import { Container, Nav, Navbar } from 'react-bootstrap'
+import { Container, Navbar } from 'react-bootstrap'
 import { FaFaucetDrip } from "react-icons/fa6";
 
 const NavbarComponent = () => {

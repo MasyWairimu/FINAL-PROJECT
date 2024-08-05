@@ -26,6 +26,11 @@ const UserSchema =  new mongoose.Schema({
     isAdmin:{
         type:Boolean,
         default:false
+    },
+    userType:{
+        type: String,
+        enum: ['client', 'vendor'],
+        required: true
     }
 },
 {timestamps: true}

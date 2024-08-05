@@ -21,7 +21,8 @@ const BookingSchema =  new mongoose.Schema({
     },
     status:{
         type:String,
-        default: 'pending',
+        enum: ['not-grabbed', 'grabbed', 'pending', 'delivered'],
+        default: 'not-grabbed',
     },
     vendor:{
         type: mongoose.Schema.Types.ObjectId,

@@ -5,12 +5,7 @@ import authRoute from "./routes/auth.js";
 import userRoute from "./routes/users.js";
 import bookingsRoute from "./routes/bookings.js";
 import cors from 'cors';
-import axios from "axios";
-import moment from "moment";
-// import http from "http";
 import bodyParser from "body-parser";
-// import fs from "fs";
-import stkPushRoute from './routes/stkPush.js';
 
 dotenv.config();
 
@@ -51,7 +46,6 @@ app.use(express.json());
 app.use("/api/authentication", authRoute);
 app.use("/api/users", userRoute);
 app.use("/api/bookings", bookingsRoute);
-app.use("/api", stkPushRoute);
 
 // Error handling middleware
 app.use((err, req, res, next) => {
@@ -65,74 +59,11 @@ app.use((err, req, res, next) => {
     });
 });
 
-// Root endpoint
-app.get("/", (req, res) => {
-    res.send("MAJI BOOKING API WITH NODE JS");
-    const timeStamp = moment().format("YYYYMMDDHHmmss");
-    console.log(timeStamp);
-});
-
-// Register URL for C2B
-app.get("/registerurl", (req, resp) => {
-    getAccessToken()
-        .then((accessToken) => {
-            const url = "https://sandbox.safaricom.co.ke/mpesa/c2b/v1/registerurl";
-            const auth = "Bearer " + accessToken;
-            axios.post(
-                url,
-                {
-                    ShortCode: process.env.BUSINESS_SHORT_CODE,
-                    ResponseType: "Complete",
-                    ConfirmationURL: "http://example.com/confirmation",
-                    ValidationURL: "http://example.com/validation",
-                },
-                {
-                    headers: { Authorization: auth },
-                }
-            )
-                .then((response) => {
-                    resp.status(200).json(response.data);
-                })
-                .catch((error) => {
-                    console.log(error);
-                    resp.status(500).send("❌ Request failed");
-                });
-        })
-        .catch(console.log);
-});
-
-app.get("/confirmation", (req, res) => {
-    console.log("All transactions will be sent to this URL");
-    console.log(req.body);
-});
-
-app.get("/validation", (req, resp) => {
-    console.log("Validating payment");
-    console.log(req.body);
-});
-
 // Start server
 const port = process.env.PORT;
 app.listen(port, () => {
     console.log("App listening on port " + port);
 });
-
-// Access Token Function
-async function getAccessToken() {
-    const url = "https://sandbox.safaricom.co.ke/oauth/v1/generate?grant_type=client_credentials";
-    const auth = "Basic " + Buffer.from(process.env.SAFARICOM_CONSUMER_KEY + ":" + process.env.SAFARICOM_CONSUMER_SECRET).toString("base64");
-
-    try {
-        const response = await axios.get(url, {
-            headers: { Authorization: auth },
-        });
-        const accessToken = response.data.access_token;
-        return accessToken;
-    } catch (error) {
-        console.error("Error in getAccessToken:", error);
-        throw error;
-    }
-}
 
 
 
