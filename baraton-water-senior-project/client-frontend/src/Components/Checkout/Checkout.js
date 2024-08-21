@@ -1,206 +1,105 @@
 import React, { useEffect, useState } from 'react';
-import { Card, Button, Row, Col, Modal } from 'react-bootstrap';
-import Layout from '../../Layout/Layout';
-import { useNavigate } from 'react-router-dom';
+import { Card, Button, Form, Spinner, Alert } from 'react-bootstrap';
 import axios from 'axios';
 
-const Checkout = () => {
-    const [booking, setBooking] = useState(null);
-    const [error, setError] = useState('');
-    const [showModal, setShowModal] = useState(false);
-    const [vendor, setVendor] = useState(null);
-    const navigate = useNavigate();
+const Checkout = ({ bookingId }) => {
+  const [booking, setBooking] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
+  const [deliveryStatus, setDeliveryStatus] = useState('');
 
-    useEffect(() => {
-        const fetchBooking = async () => {
-            const userId = localStorage.getItem('userId');
-            if (!userId) {
-                setError('User not logged in');
-                return;
-            }
+  console.log("The bookingId is: ", bookingId);
 
-            try {
-                const res = await axios.get('http://localhost:8000/api/bookings/user/' + userId);
-                const bookings = res.data;
-                setBooking(bookings[bookings.length - 1]);
-            } catch (err) {
-                setError(err.response?.data?.message || 'Failed to fetch booking data');
-            }
-        };
-        fetchBooking();
-    }, [navigate]);
 
-    useEffect(() => {
-        const fetchVendor = async () => {
-            if (booking && booking.vendor) {
-                try {
-                    const res = await axios.get(`http://localhost:8000/api/users/` + booking.vendor);
-                    setVendor(res.data);
-                } catch (err) {
-                    setError(err.response?.data?.message || 'Failed to fetch vendor data');
-                }
-            }
-        };
-        fetchVendor();
-    }, [booking]);
+  useEffect(() => {
 
-    const totalPrice = (amount) => {
-        return amount * 20;
-    };
+    console.log("bookingId: ", bookingId);
 
-    const handleShowModal = () => setShowModal(true);
-    const handleCloseModal = () => setShowModal(false);
-
-    const handleDelivery = async () => {
+    const fetchBookingDetails = async () => {
+        console.log("Check out details for bookingId:" + bookingId)
+      if (bookingId) {
+        setLoading(true);
+        setError(''); // Reset error before fetching
         try {
-            const res = await axios.put(`http://localhost:8000/api/bookings/` + booking._id, { status: 'delivered' });
-            setBooking(res.data);
-            handleCloseModal();
+          console.log('Fetching booking details for ID:', bookingId);
+          const response = await axios.get(`http://localhost:8000/api/bookings/${bookingId}`);
+          console.log('Booking response:', response.data); // Log the response data
+          setBooking(response.data);
+          setDeliveryStatus(response.data.status);
         } catch (err) {
-            setError(err.response?.data?.message || 'Failed to update booking status');
+          console.log('Error fetching booking details:', err);
+          setError(err.response?.data?.message || 'Failed to fetch booking details');
+        } finally {
+          setLoading(false);
         }
+      }
     };
 
-    if (error) return <p style={{ color: 'red' }}>{error}</p>;
+    fetchBookingDetails();
+  }, [bookingId]);
 
-    return (
-        <Layout>
-            <div className='d-flex justify-content-center align-items-center'>
-                <Card style={{ width: '70vw', backgroundColor: '#383232', color: 'white' }} className='mx-auto mt-3 p-3'>
-                    <Card.Body>
-                        <Card.Title className='text-center p-2'>CHECKOUT</Card.Title>
-                        {booking ? (
-                            <div>
-                                <Row className="mb-3">
-                                    <Col><p><strong>Area:</strong> {booking.area}</p></Col>
-                                    <Col><p><strong>Plot:</strong> {booking.plot}</p></Col>
-                                </Row>
-                                <Row className="mb-3">
-                                    <Col> <p><strong>No. of Jericans:</strong> {booking.amount}</p></Col>
-                                    <Col> <p><strong>Total Price:</strong> Ksh. {totalPrice(booking.amount)}</p></Col>
-                                </Row>
-                            </div>
-                        ) : (
-                            <p>Loading...</p>
-                        )}
-                        <div className='d-grid d-md-flex justify-content-md-end m-2'>
-                            <Button className='btn' onClick={handleShowModal} style={{ color: 'whitesmoke', textDecoration: 'none' }}>Check Status</Button>
-                        </div>
-                    </Card.Body>
-                </Card>
-            </div>
+  const handleMarkAsDelivered = async () => {
+    try {
+      await axios.put(`http://localhost:8000/api/bookings/${bookingId}/grab`, {
+        status: 'delivered',
+      });
+      setDeliveryStatus('delivered');
+    } catch (err) {
+      setError(err.response?.data?.message || 'Failed to update delivery status');
+    }
+  };
 
-            {booking && vendor && (
-                <Modal show={showModal} onHide={handleCloseModal}>
-                    <Modal.Header closeButton>
-                        <Modal.Title>Booking Status</Modal.Title>
-                    </Modal.Header>
-                    <Modal.Body>
-                        <p><strong>Status:</strong> {booking.status}</p>
-                        <p><strong>Vendor Name:</strong> {vendor.username}</p>
-                        <p><strong>Vendor Phone Number:</strong> {vendor.phoneNumber}</p>
-                        {/* Add map or other details as needed */}
-                    </Modal.Body>
-                    <Modal.Footer>
-                        <Button variant="secondary" onClick={handleCloseModal}>
-                            Close
-                        </Button>
-                        {booking.status !== 'delivered' && (
-                            <Button variant="primary" onClick={handleDelivery}>
-                                Mark as Delivered
-                            </Button>
-                        )}
-                    </Modal.Footer>
-                </Modal>
-            )}
-        </Layout>
-    );
+  return (
+    <Card>
+      <Card.Header as="h5">Booking Details</Card.Header>
+      <Card.Body>
+        {loading ? (
+          <Spinner animation="border" variant="primary" />
+        ) : error ? (
+          <Alert variant="danger">{error}</Alert>
+        ) : booking ? (
+          <div>
+            <Form.Group>
+              <Form.Label>Name</Form.Label>
+              <Form.Control type="text" value={booking.userId?.username || 'N/A'} readOnly />
+            </Form.Group>
+            <Form.Group>
+              <Form.Label>Phone Number</Form.Label>
+              <Form.Control type="text" value={booking.userId?.phoneNumber || 'N/A'} readOnly />
+            </Form.Group>
+            <Form.Group>
+              <Form.Label>Area</Form.Label>
+              <Form.Control type="text" value={booking.area || 'N/A'} readOnly />
+            </Form.Group>
+            <Form.Group>
+              <Form.Label>Plot</Form.Label>
+              <Form.Control type="text" value={booking.plot || 'N/A'} readOnly />
+            </Form.Group>
+            <Form.Group>
+              <Form.Label>Amount</Form.Label>
+              <Form.Control type="text" value={booking.amount || 'N/A'} readOnly />
+            </Form.Group>
+            <Form.Group>
+              <Form.Label>Delivery Status</Form.Label>
+              <Form.Control type="text" value={deliveryStatus || 'N/A'} readOnly />
+            </Form.Group>
+          </div>
+        ) : (
+          <p>No booking details available.</p>
+        )}
+      </Card.Body>
+      <Card.Footer>
+        {deliveryStatus !== 'delivered' && (
+          <Button variant="primary" onClick={handleMarkAsDelivered}>
+            Mark as Delivered
+          </Button>
+        )}
+        <Button variant="secondary" onClick={() => window.history.back()}>
+          Close
+        </Button>
+      </Card.Footer>
+    </Card>
+  );
 };
 
 export default Checkout;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// import React, { useEffect, useState } from 'react'
-// import { Card, Button, Row, Col } from 'react-bootstrap'
-// import Layout from '../../Layout/Layout'
-// import { useNavigate } from 'react-router-dom'
-// import axios from 'axios'
-
-// const Checkout = () => {
-//     const [booking, setBooking] = useState(null);
-//     const [error, setError] = useState('');
-//     const navigate = useNavigate();
-
-//     useEffect(() => {
-//         const fetchBooking = async () => {
-//             const userId = localStorage.getItem('userId');
-//             if (!userId) {
-//                 setError('User not logged in');
-//                 return;
-//             }
-
-//             try {
-//                 const res = await axios.get('http://localhost:8000/api/bookings/');
-//                 const bookings = res.data;
-//                 setBooking(bookings[bookings.length - 1]);
-//             } catch (err) {
-//                 setError(err.response?.data?.message || 'failed to fetch booking data')
-//             }
-//         };
-//         fetchBooking();
-//     }, [navigate]);
-
-//     const totalPrice = (amount) => {
-//         return amount * 20;
-//     };
-
-//     if (error) return <p style={{ color: 'red' }}>{error}</p>;
-
-//     return (
-//         <Layout>
-//             <div className='d-flex justify-content-center align-items-center'>
-//                 <Card style={{ width: '70vw', backgroundColor: '#383232', color: 'white' }} className='mx-auto mt-3 p-3'>
-//                     <Card.Body>
-//                         <Card.Title className='text-center p-2'>CHECKOUT</Card.Title>
-//                         {booking ? (
-//                             <div>
-//                                 <Row className="mb-3">
-//                                     <Col><p><strong>Area:</strong> {booking.area}</p></Col>
-//                                     <Col><p><strong>Plot:</strong> {booking.plot}</p></Col>
-//                                 </Row>
-//                                 <Row className="mb-3">
-//                                     <Col> <p><strong>No. of Jericans:</strong> {booking.amount}</p></Col>
-//                                     <Col> <p><strong>Total Price:</strong> Ksh. {totalPrice(booking.amount)}</p></Col>
-
-//                                 </Row>
-//                             </div>
-//                         ) : (
-//                             <p>Loading...</p>
-//                         )}
-//                         <div className='d-grid d-md-flex justify-content-md-end m-2'>
-//                             <Button className='btn' onClick={() => navigate('/home')} style={{ color: 'whitesmoke', textDecoration: 'none' }}>Check Status</Button>
-//                         </div>
-
-//                     </Card.Body>
-//                 </Card>
-//             </div>
-//         </Layout>
-
-//     )
-// }
-
-// export default Checkout

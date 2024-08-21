@@ -24,8 +24,10 @@ const Booking = () => {
             const res = await axios.post('http://localhost:8000/api/bookings',
                 { userId, area, plot, amount },
             );
+            const bookingId =  res.data._id
             console.log(res.data);
-            navigate('/checkout');
+            console.log('Booking ID:', bookingId)
+            navigate(`/checkout/${bookingId}`);
 
         } catch (err) {
             setError(err.response?.data?.message || <Alert>'Something went wrong. Try connecting to a stable network'</Alert>)

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Table, Spinner, Alert, Tabs, Tab, Button } from 'react-bootstrap';
-import VendorLayout from '../../Layout/VendorLayout'
+import VendorLayout from '../../Layout/VendorLayout';
 import axios from 'axios';
 
 const Vendor = () => {
@@ -22,7 +22,6 @@ const Vendor = () => {
                 const [deliveriesRes, myOrdersRes] = await Promise.all([
                     axios.get('http://localhost:8000/api/bookings/'),
                     axios.get('http://localhost:8000/api/bookings/vendor/' + userId)
-
                 ]);
                 setDeliveries(deliveriesRes.data);
                 setMyOrders(myOrdersRes.data);
@@ -37,12 +36,13 @@ const Vendor = () => {
     }, [userId]);
 
     const handleStatusChange = async (id, status) => {
-        const userId = localStorage.getItem('userId')
         try {
-            await axios.put('http://localhost:8000/api/bookings/'+id+'/grab', { userId });
+            await axios.put('http://localhost:8000/api/bookings/'+id+'/grab', { userId, status });
             setDeliveries(deliveries.filter(delivery => delivery._id !== id));
-            const grabbedDelivery = deliveries.find(delivery => delivery.id === id);
-            setMyOrders([...myOrders, { ...grabbedDelivery, status: 'grabbed', vendor: userId }]);
+            const grabbedDelivery = deliveries.find(delivery => delivery._id === id);
+            if (grabbedDelivery) {
+                setMyOrders([...myOrders, { ...grabbedDelivery, status: 'grabbed', vendor: userId }]);
+            }
         } catch (err) {
             console.error('Failed to update delivery status', err);
         }
@@ -53,7 +53,7 @@ const Vendor = () => {
             <div>
                 <h1 style={{ color: 'white', textAlign: 'center' }} className='mt-2'> <strong>Vendor Dashboard</strong></h1>
                 <Tabs defaultActiveKey="available" id="vendor-tabs" className="mb-3">
-                    <Tab eventKey="available" title="Available Deliveries" style={{textDecoration: 'none'}}>
+                    <Tab eventKey="available" title="Available Deliveries">
                         {loading ? (
                             <Spinner animation="border" variant="light" />
                         ) : error ? (
@@ -82,7 +82,7 @@ const Vendor = () => {
                                                 <td>{delivery.plot}</td>
                                                 <td>{delivery.amount}</td>
                                                 <td>
-                                                    <Button variant="success" onClick={() => handleStatusChange(delivery._id)}>
+                                                    <Button variant="success" onClick={() => handleStatusChange(delivery._id, 'grabbed')}>
                                                         Grab
                                                     </Button>
                                                 </td>
@@ -97,7 +97,7 @@ const Vendor = () => {
                             </Table>
                         )}
                     </Tab>
-                    <Tab eventKey="orders" title="My Orders" style={{textDecoration: 'none'}}>
+                    <Tab eventKey="orders" title="My Orders">
                         {loading ? (
                             <Spinner animation="border" variant="light" />
                         ) : error ? (
@@ -126,7 +126,11 @@ const Vendor = () => {
                                                 <td>{order.plot}</td>
                                                 <td>{order.amount}</td>
                                                 <td>
-                                                    {order.status}
+                                                    {order.status === 'grabbed' && (
+                                                        <Button variant="primary" onClick={() => handleStatusChange(order._id, 'delivered')}>
+                                                            Mark as Delivered
+                                                        </Button>
+                                                    )}
                                                 </td>
                                             </tr>
                                         ))

@@ -12,7 +12,7 @@ const Signup = () => {
         location: '',
         password: '',
         confirmPassword: '',
-        userType: 'client'
+        userType: ''
     });
     const [error, setError] = useState('');
 
@@ -84,13 +84,14 @@ const Signup = () => {
                         </Form.Group>
                     </Row>
 
-                    <Form.Group className="mb-3">
-                        <Form.Label>User Type</Form.Label>
-                        <Form.Control as="select" name="userType" value={userType} onChange={onChange}>
-                            <option value="client">Client</option>
-                            <option value="vendor">Vendor</option>
-                        </Form.Control>
-                    </Form.Group>
+                    <Form.Group as={Col}>
+                            <Form.Label>Sign Up As</Form.Label>
+                            <Form.Control as="select" name="userType" value={userType} onChange={onChange}>
+                                <option value="">Select User Type</option>
+                                <option value="client">Client</option>
+                                <option value="vendor">Vendor</option>
+                            </Form.Control>
+                        </Form.Group>
 
                     {error && <p style={{ color: 'red' }}>{error}</p>}
 

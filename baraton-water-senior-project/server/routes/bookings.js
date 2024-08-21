@@ -1,5 +1,5 @@
 import express from "express";
-import { deleteBooking,  getAllBookingsAdmin, getBookingsVendor, getBooking, newBooking, updateBooking } from "../controllers/bookingController.js";
+import { deleteBooking, getBookingById,  getAllBookingsAdmin, getBookingsVendor, getBooking, newBooking, updateBooking } from "../controllers/bookingController.js";
 
 const router = express.Router();
 
@@ -9,16 +9,19 @@ router.post("/", newBooking);
 // UPDATE
 router.put("/:id/grab", updateBooking);
 
-// GET ALL FOR USER
+// GET BOOKING BY ID
+router.get("/:id", getBookingById);
+
+// GET ALL FOR A USER
 router.get("/user/:userId", getBooking);
 
-// GET ALL
+// GET ALL (ADMIN)
 router.get("/", getAllBookingsAdmin);
 
 // GET ALL BOOKINGS GRABBED BY VENDOR
 router.get("/vendor/:userId", getBookingsVendor)
 
 // DELETE
-router.delete("/id", deleteBooking);
+router.delete("/:id", deleteBooking);
 
 export default router

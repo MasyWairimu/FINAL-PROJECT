@@ -26,7 +26,7 @@ const AdminPanel = () => {
             setError(err.response?.data?.message || 'Failed to delete user');
         }
     };
-
+    
     if (error) return <p style={{ color: 'red' }}>{error}</p>;
 
     return (

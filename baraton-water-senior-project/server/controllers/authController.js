@@ -14,7 +14,8 @@ export const register = async (req, res, next) => {
             email:req.body.email,
             phoneNumber:req.body.phoneNumber,
             location:req.body.location,
-            password:hash
+            password:hash,
+            userType: req.body.userType
         })
 
         await newUser.save()
